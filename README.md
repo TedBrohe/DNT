@@ -1,0 +1,352 @@
+# DNT_PRO (Dead Reckoning Navigation Trainer Pro)
+
+추측항법(Dead Reckoning) 훈련을 위한 프로페셔널 웹 기반 비행 시뮬레이터
+
+---
+
+## 프로젝트 소개
+
+**DNT_PRO**는 항공 항법 훈련생들이 추측항법 기술을 연습할 수 있는 실시간 시뮬레이터입니다.
+
+계획된 바람과 실제 바람의 차이를 계산하고, 정확한 시간에 각 경유지에 도착하도록 항공기를 조종하는 훈련 도구로
+**기본 경로**와 **사용자 지정 경로** 두 가지 모드를 지원합니다.
+
+### 주요 특징
+
+#### 듀얼 모드 시스템
+- **Default Route**: 고정 경로 (KWA → TGU → PSN → KWA)
+- **Custom Route**: 자유롭게 경로 설정 (최대 10개 구간)
+
+#### 동적 항로 네트워크
+- **11개 NAVAID/FIX**: 실제 항공로 네트워크 기반
+- **자동 연결 검증**: 실제 항로로 연결된 NAVAID만 선택 가능
+- **NAVAID 상태 설정**: 각 NAVAID의 작동/고장 여부 선택 가능
+
+#### 지능형 MAP 시스템
+- **자동 경로 생성**: JSON 데이터베이스 기반 BFS 알고리즘
+- **경로 강조 표시**: 선택한 경로는 노란색, 나머지는 흐린 회색
+- **실시간 추적**: 항공기 위치 히스토리 (1분 간격)
+- **터치 제스처**: 핀치 줌, 스와이프 이동
+- **자동 중앙 배치**: 훈련 시작 시 항공기 화면 중앙 표시
+
+#### 정밀 항법 계산
+- **벡터 수학 기반**: 정확한 Required Heading 계산
+- **실시간 바람 변화**: 3초마다 자연스러운 fluctuation
+- **자동 ETA 계산**: 모든 경유지 도착 시간 자동 산출
+- **ATA 기록**: 최단접근점 통과 시간 자동 기록
+
+#### 비행 계획 자동화
+- **즉시 계산**: TC, MC, TH, MH, DA, GS, DIST, ETE, ETA
+- **MB4 계산기**: 시간/거리/속도, 바람 역산, 코스 예상, 요구 헤딩
+
+---
+
+## 훈련 경로
+
+### Default Route (기본)
+```
+KWA (광주) → TGU (대구) → PSN (부산) → KWA (광주)
+```
+- 총 비행 거리: 약 253 NM
+- 자북 기준(Magnetic) 항법
+- PSN: 고장 상태 (NAVAID 사용 불가)
+
+### Custom Route (사용자 지정)
+```
+임의의 NAVAID/FIX 조합 (예시)
+KPO (포항) → PILIT (FIX) → KAE (강원) → SEL (안양)
+```
+- 최대 10개 구간
+- 연결된 NAVAID만 선택 가능
+- 각 NAVAID 작동 여부 설정 가능
+
+---
+
+## 사용 방법
+
+### Mode 1: Default Route
+
+#### 1단계: 비행 계획 수립
+1. **"Default Route" 탭** 선택
+2. **바람 정보 입력**
+   - Wind Direction (000-360°)
+   - Wind Speed (0-100 kts)
+   - True Airspeed (100-300 kts)
+3. **[결정] 버튼 클릭**
+   - 전체 경로 자동 계산
+   - TC, MC, TH, MH, DA, GS, DIST, ETE 표시
+
+#### 2단계: 훈련 시작
+4. **[훈련 시작] 버튼 클릭**
+   - 항공기가 KWA 인근 2-4 NM 거리에 스폰
+   - 실제 바람: 계획 바람 ± 40° / ± 10 kts
+   - 바람은 3초마다 자연스럽게 변화
+   - **Custom Route 탭 자동 잠금** (혼란 방지)
+
+#### 3단계: 항공기 조종
+5. **"조종" 탭에서 입력**
+   - Heading (Magnetic, 000-359°)
+   - TAS (True Airspeed, 100-300 kts)
+   - 빈칸은 현재 값 유지
+   - **[SUBMIT]**으로 적용
+
+#### 4단계: 항법 계산 (MB4)
+6. **"MB4" 탭 사용**
+   - **시간/거리/속도**: 2개 입력 → 3번째 자동 계산
+   - **바람 역산**: MH/TAS + TRK/GS → W/V 계산
+   - **코스 예상**: MH/TAS + W/V → TRK/GS 계산
+   - **요구 헤딩**: MC/TAS + W/V → MH/GS 계산
+
+---
+
+### Mode 2: Custom Route
+
+#### 1단계: 경로 설정
+1. **"Custom Route" 탭** 선택
+2. **바람/TAS 입력** (상단)
+3. **START NAVAID 입력**
+   - 3글자 코드 입력 (예: KPO)
+   - 자동완성으로 선택
+   - Operative 체크박스로 작동 여부 설정
+4. **[+ 경로 추가]** 클릭
+   - 이전 NAVAID와 연결된 것만 표시
+   - FIX는 체크박스 자동 비활성 (항상 작동)
+5. **경로 완성** (최대 10개 구간)
+   - MC, DIST 자동 표시
+   - 연결 안되면 빨간 테두리
+
+#### 2단계: 계산 및 시작
+6. **[계산] 버튼 클릭**
+   - 경로 입력 화면 → 비행 로그 테이블로 전환
+   - 전체 경로 자동 계산
+7. **[훈련 시작]**
+   - 첫 번째 NAVAID 인근 스폰
+   - **Default Route 탭 자동 잠금**
+
+---
+
+## 화면 구성
+
+### 상단 화면 (2개 탭)
+
+#### HSI 탭
+- **회전 나침반**: 0-360° 자유 회전
+- **항공기 심볼**: 고정 (화면 중앙)
+- **NAVAID 니들**: 방향 및 TO/FROM 표시
+- **Heading 윈도우**: 현재 헤딩 표시
+- **DME 윈도우**: 거리 및 채널 표시
+  - **FIX는 DME 표시 안함** (---로 표시)
+
+#### MAP 탭
+- **실시간 항공기 위치**
+- **경로 강조 표시**:
+  - 선택한 경로: 노란색 굵은 선 (3px)
+  - 나머지 경로: 회색 가는 선 (1px, 40% 투명도)
+- **NAVAID/FIX 구분**:
+  - NAVAID: 사각형 (녹색=작동, 빨간색=고장)
+  - FIX: 삼각형 (흰색)
+- **핀치 줌 / 스와이프**: 자유로운 화면 이동
+- **항공기 히스토리**: 녹색 점 (1분 간격)
+- **TRK/GS 및 W/V 정보**: 하단 표시
+- **자동 중앙 배치**: 훈련 시작 시
+
+### 하단 컨트롤 (4개 탭)
+
+#### 1. 비행로그
+**Default Route:**
+- 고정 테이블 (START, 1, 2, END)
+- 바람/TAS 입력 → [결정] → 로그 생성
+
+**Custom Route:**
+- 동적 테이블 (입력한 경로대로)
+- 경로 입력 → [계산] → 로그 생성
+- **경로 입력 화면이 로그로 자동 전환**
+
+#### 2. 조종
+- **HDG**: 자북 기준 헤딩 (000-359°)
+- **TAS**: 진대기속도 (100-300 kts)
+- **빈칸**: 현재 값 유지
+- **[SUBMIT]**: 즉시 적용
+
+#### 3. MB4 계산기
+**4가지 계산 모드:**
+1. **시간/거리/속도**
+   - 입력: Time, Distance
+   - 출력: Speed
+2. **바람 계산**
+   - 입력: MH, TAS, TRK, GS
+   - 출력: Wind Direction/Speed
+3. **코스 예상**
+   - 입력: MH, TAS, W/V
+   - 출력: TRK, GS
+4. **요구 헤딩**
+   - 입력: MC, TAS, W/V
+   - 출력: MH, GS
+
+#### 4. 이벤트
+- 시간 순 로그 (HH:MM:SS)
+- 변침/변속 기록
+- NAVAID 통과 기록
+- 최신 20개 항목 표시
+
+---
+
+## 기술 스택
+
+### Frontend
+- **Vanilla JavaScript**: 프레임워크 없이 순수 JS
+- **HTML5 Canvas**: HSI 및 MAP 렌더링
+- **CSS3**: 반응형 레이아웃, 터치 최적화
+
+### 항법 계산
+- **벡터 수학**: 정밀한 바람 삼각형 계산
+- **BFS 알고리즘**: 동적 MAP 생성
+- **정규화 함수**: 각도 0-359° 범위 보장
+
+### 데이터 구조
+- **JSON 데이터베이스**: NAVAID 정보 및 연결
+- **동적 경로 생성**: connectedTo 기반
+
+---
+
+## 파일 구조
+
+```
+/DNT_PRO/
+├── index.html              # HTML 구조, 듀얼 모드 UI
+├── style.css               # 스타일시트, 반응형 디자인
+├── data.js                 # 상수, 색상, 기본 NAVAID
+├── navaid-database.js      # NAVAID/FIX 데이터베이스 ⭐
+├── navigation.js           # 항법 계산, 바람 삼각형
+├── renderer.js             # Canvas 렌더링 (HSI + MAP)
+├── app.js                  # 메인 로직, 상태 관리, UI
+└── README.md               # 프로젝트 문서
+```
+
+---
+
+## 항법 계산 원리
+
+### Magnetic Variation : 8°W
+```
+TC (True Course)  = MC - 8°
+TH (True Heading) = MH - 8°
+```
+
+### 바람 삼각형 (Wind Triangle)
+벡터 방정식:
+```
+TAS vector + Wind vector = GS vector (on desired course)
+```
+
+**계산 과정:**
+1. Wind를 Course에 대해 분해: Crosswind + Alongwind
+2. TAS는 Crosswind 상쇄 (perpendicular component)
+3. Ground Speed = TAS along + Alongwind
+
+### Drift Angle (편류각)
+```
+DA = MC - MH
+```
+- **양수(+)**: Right drift (바람이 오른쪽에서)
+- **음수(-)**: Left drift (바람이 왼쪽에서)
+
+### 각도 정규화
+모든 각도는 **0-359° 범위**로 자동 보정:
+```javascript
+function normalizeAngle(angle) {
+  angle = angle % 360;
+  if (angle < 0) angle += 360;
+  return angle;
+}
+```
+**예시**: MC 5° - Variation 8° = TC -3° → **357°**
+
+## 훈련 목표
+
+### 1. 바람 역산 능력
+실제 비행 데이터(TRK, GS)로부터 실제 바람 계산
+
+### 2. 요구 헤딩 산출
+원하는 코스를 유지하기 위한 정확한 헤딩 계산
+
+### 3. 시간 관리
+ETA에 맞춰 정확히 도착하는 능력 배양
+
+### 4. 항법 정확도
+각 경유지 최단접근점 통과 시간 기록 및 분석
+
+### 5. 동적 경로 계획
+다양한 경로 조합으로 응용력 향상
+
+---
+
+### 터치 제스처
+- **핀치 줌**: MAP 확대/축소
+- **스와이프**: MAP 이동
+- **탭**: NAVAID 정보 확인
+
+### 반응형 레이아웃
+- 세로/가로 화면 자동 대응
+- 작은 화면에서도 최적화된 UI
+
+---
+
+## 훈련 팁
+
+### 초보자
+1. Default Route로 시작
+2. 바람 10-20 kts로 연습
+3. MB4로 계산 확인
+4. ATA vs ETA 비교 분석
+
+### 중급자
+1. Custom Route 3-5개 구간
+2. 바람 20-40 kts 도전
+3. 고장 NAVAID 포함 경로
+4. ETA 정확도 향상
+
+### 고급자
+1. 최대 10개 구간 경로
+2. 강풍 40+ kts
+3. 여러 NAVAID 고장 시나리오
+4. 최소 편차 비행 도전
+
+---
+
+## 라이센스
+
+이 프로젝트는 교육 목적으로 제작되었습니다.
+
+---
+
+### 항법 이론
+- Dead Reckoning Navigation
+- Wind Triangle Calculations
+- Magnetic Variation
+
+---
+
+## 학습 자료
+
+### 추천 학습 순서
+1. **기본 개념**: Magnetic Variation, True vs Magnetic
+2. **바람 삼각형**: TAS, GS, Wind의 관계
+3. **Default Route**: 고정 경로로 연습
+4. **MB4 계산기**: 수동 계산 연습
+5. **Custom Route**: 자유 경로 계획
+6. **고급 시나리오**: 고장 NAVAID, 강풍
+
+### 연습 과제
+- [ ] Default Route를 ETA ±2분 이내 완주
+- [ ] Custom Route 5개 구간 설정 및 완주
+- [ ] MB4로 실제 바람 역산 (±5° / ±5kts)
+- [ ] FIX 포함 경로 정확히 비행
+- [ ] 고장 NAVAID 우회 경로 계획
+
+---
+
+**Happy Flying!**
+
+Version: 2.0 (DNT_PRO)  
+Last Updated: 2026-02-15
