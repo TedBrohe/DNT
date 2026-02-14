@@ -216,7 +216,7 @@ KPO (포항) → PILIT (FIX) → KAE (강원) → SEL (안양)
 ├── index.html              # HTML 구조, 듀얼 모드 UI
 ├── style.css               # 스타일시트, 반응형 디자인
 ├── data.js                 # 상수, 색상, 기본 NAVAID
-├── navaid-database.js      # NAVAID/FIX 데이터베이스 ⭐
+├── navaid-database.js      # NAVAID/FIX 데이터베이스
 ├── navigation.js           # 항법 계산, 바람 삼각형
 ├── renderer.js             # Canvas 렌더링 (HSI + MAP)
 ├── app.js                  # 메인 로직, 상태 관리, UI
