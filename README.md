@@ -225,43 +225,6 @@ KPO (포항) → PILIT (FIX) → KAE (강원) → SEL (안양)
 
 ---
 
-## 항법 계산 원리
-
-### Magnetic Variation : 8°W
-```
-TC (True Course)  = MC - 8°
-TH (True Heading) = MH - 8°
-```
-
-### 바람 삼각형 (Wind Triangle)
-벡터 방정식:
-```
-TAS vector + Wind vector = GS vector (on desired course)
-```
-
-**계산 과정:**
-1. Wind를 Course에 대해 분해: Crosswind + Alongwind
-2. TAS는 Crosswind 상쇄 (perpendicular component)
-3. Ground Speed = TAS along + Alongwind
-
-### Drift Angle (편류각)
-```
-DA = MC - MH
-```
-- **양수(+)**: Right drift (바람이 오른쪽에서)
-- **음수(-)**: Left drift (바람이 왼쪽에서)
-
-### 각도 정규화
-모든 각도는 **0-359° 범위**로 자동 보정:
-```javascript
-function normalizeAngle(angle) {
-  angle = angle % 360;
-  if (angle < 0) angle += 360;
-  return angle;
-}
-```
-**예시**: MC 5° - Variation 8° = TC -3° → **357°**
-
 ## 훈련 목표
 
 ### 1. 바람 역산 능력
