@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <title>DR Nav Trainer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Upper Display Area -->
+    <div class="upper-section">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="hsi" data-group="upper">HSI</button>
+        <button class="tab-btn" data-tab="map" data-group="upper">MAP</button>
+      </div>
+      
+      <div class="upper-display">
+        <canvas id="hsiCanvas"></canvas>
+        <canvas id="mapCanvas" style="display: none;"></canvas>
+      </div>
+    </div>
+
+    <!-- Lower Control Area -->
+    <div class="lower-section">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="log" data-group="lower">비행로그</button>
+        <button class="tab-btn" data-tab="control" data-group="lower">조종</button>
+        <button class="tab-btn" data-tab="calculator" data-group="lower">MB4</button>
+        <button class="tab-btn" data-tab="events" data-group="lower">이벤트</button>
+      </div>
+
+      <!-- Flight Log Panel -->
+      <div id="logPanel" class="control-panel active">
+        <!-- Route Mode Selection -->
+        <div class="route-mode-selector">
+          <button id="defaultRouteBtn" class="route-mode-btn active">Default Route</button>
+          <button id="customRouteBtn" class="route-mode-btn">Custom Route</button>
+        </div>
+        
+        <!-- Default Route Section -->
+        <div id="defaultRouteSection" class="route-section">
+          <div class="wind-input-section">
+            <div class="input-group">
+              <label>WIND (INPUT):</label>
+              <input type="number" id="windDir" placeholder="000" min="0" max="360" maxlength="3">
+              <span>/</span>
+              <input type="number" id="windSpd" placeholder="00" min="0" max="100" maxlength="2">
+            </div>
+            
+            <div class="input-group">
+              <label>TAS (INPUT):</label>
+              <input type="number" id="tasInput" value="240" min="100" max="300">
+            </div>
+            
+            <button id="windDecideBtn" class="btn btn-primary btn-decide">결정</button>
+          </div>
+
+          <div class="flight-log-table-container">
+            <table id="flightLogTable">
+              <thead>
+                <tr>
+                  <th>RMK</th>
+                  <th>NAVAID</th>
+                  <th>TC</th>
+                  <th>MC</th>
+                  <th>TH</th>
+                  <th>MH</th>
+                  <th>DA</th>
+                  <th>GS</th>
+                  <th>DIST</th>
+                  <th>ETE</th>
+                  <th>ETA</th>
+                  <th>ATA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+
+          <button id="startBtn" class="btn btn-success btn-large">훈련 시작</button>
+        </div>
+        
+        <!-- Custom Route Section -->
+        <div id="customRouteSection" class="route-section" style="display: none;">
+          <div class="custom-route-info">
+            <p>📍 NAVAID를 선택하여 자유롭게 경로를 설정하세요 (최대 5개 구간)</p>
+          </div>
+          
+          <div class="wind-input-section">
+            <div class="input-group">
+              <label>WIND (INPUT):</label>
+              <input type="number" id="windDirCustom" placeholder="000" min="0" max="360" maxlength="3">
+              <span>/</span>
+              <input type="number" id="windSpdCustom" placeholder="00" min="0" max="100" maxlength="2">
+            </div>
+            
+            <div class="input-group">
+              <label>TAS (INPUT):</label>
+              <input type="number" id="tasInputCustom" value="240" min="100" max="300">
+            </div>
+          </div>
+          
+          <div class="custom-route-builder">
+            <table id="customRouteTable">
+              <thead>
+                <tr>
+                  <th style="width: 60px;">RMK</th>
+                  <th style="width: 120px;">NAVAID</th>
+                  <th style="width: 60px;">OP</th>
+                  <th>MC</th>
+                  <th>DIST</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="customRouteBody">
+                <tr data-leg="start">
+                  <td>START</td>
+                  <td style="position: relative;">
+                    <input type="text" class="navaid-input" data-index="0" placeholder="NAVAID" maxlength="3">
+                    <div class="navaid-suggestions"></div>
+                  </td>
+                  <td>
+                    <input type="checkbox" class="operative-checkbox" data-index="0" checked>
+                  </td>
+                  <td colspan="3">-</td>
+                </tr>
+              </tbody>
+            </table>
+            
+            <button id="addLegBtn" class="btn btn-secondary" style="width: 100%; margin-top: 10px;">+ 경로 추가</button>
+          </div>
+          
+          <!-- Flight Log Table (hidden initially) -->
+          <div class="flight-log-table-container" style="display: none;">
+            <table id="flightLogTableCustom">
+              <thead>
+                <tr>
+                  <th>RMK</th>
+                  <th>NAVAID</th>
+                  <th>TC</th>
+                  <th>MC</th>
+                  <th>TH</th>
+                  <th>MH</th>
+                  <th>DA</th>
+                  <th>GS</th>
+                  <th>DIST</th>
+                  <th>ETE</th>
+                  <th>ETA</th>
+                  <th>ATA</th>
+                </tr>
+              </thead>
+              <tbody id="flightLogBodyCustom">
+                <!-- Will be populated by JavaScript -->
+              </tbody>
+            </table>
+          </div>
+          
+          <div class="custom-route-actions">
+            <button id="calculateCustomBtn" class="btn btn-primary btn-decide">계산</button>
+            <button id="startCustomBtn" class="btn btn-success btn-large" disabled>훈련 시작</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Control Panel -->
+      <div id="controlPanel" class="control-panel">
+        <div class="control-section">
+          <h3>FLT/CT, Recommended</h3>
+          
+          <div class="input-group">
+            <label>HDG (MAG):</label>
+            <input type="number" id="recommendHdg" placeholder="000" min="0" max="360">
+          </div>
+          
+          <div class="input-group">
+            <label>TAS (KTS):</label>
+            <input type="number" id="recommendTas" placeholder="240" min="100" max="300">
+          </div>
+          
+          <div class="button-group">
+            <button id="controlClearBtn" class="btn btn-secondary">CLEAR</button>
+            <button id="controlSubmitBtn" class="btn btn-primary">SUBMIT</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MB4 Calculator Panel -->
+      <div id="calculatorPanel" class="control-panel">
+        <div class="calc-section">
+          <h4>시간/거리 계산</h4>
+          <div class="calc-input-row">
+            <input type="number" id="calcTime" placeholder="시간(분)" step="0.1">
+            <input type="number" id="calcDist" placeholder="거리(NM)" step="0.1">
+          </div>
+          <div class="calc-input-row">
+            <input type="number" id="calcSpeed" placeholder="GS(kts)" step="1">
+          </div>
+          <div class="calc-button-result">
+            <button id="calcDistBtn" class="btn btn-small">계산</button>
+            <div id="calcResult1" class="calc-result-inline">-</div>
+          </div>
+        </div>
+
+        <div class="calc-section">
+          <h4>바람 계산 (MH/TAS + TRK/GS → W/V)</h4>
+          <div class="calc-input-row">
+            <input type="number" id="calcTH" placeholder="MH" min="0" max="360">
+            <input type="number" id="calcTAS" placeholder="TAS" min="0" max="500">
+          </div>
+          <div class="calc-input-row">
+            <input type="number" id="calcTRK" placeholder="TRK" min="0" max="360">
+            <input type="number" id="calcGS" placeholder="GS" min="0" max="500">
+          </div>
+          <div class="calc-button-result">
+            <button id="calcWindBtn" class="btn btn-small">계산</button>
+            <div id="calcResult2" class="calc-result-inline">-</div>
+          </div>
+        </div>
+
+        <div class="calc-section">
+          <h4>코스 예상 (MH/TAS + W/V → TRK/GS)</h4>
+          <div class="calc-input-row">
+            <input type="number" id="calcTH2" placeholder="MH" min="0" max="360">
+            <input type="number" id="calcTAS2" placeholder="TAS" min="0" max="500">
+          </div>
+          <div class="calc-input-row">
+            <input type="number" id="calcWDir" placeholder="W Dir" min="0" max="360">
+            <input type="number" id="calcWSpd" placeholder="W Spd" min="0" max="200">
+          </div>
+          <div class="calc-button-result">
+            <button id="calcCourseBtn" class="btn btn-small">계산</button>
+            <div id="calcResult3" class="calc-result-inline">-</div>
+          </div>
+        </div>
+
+        <div class="calc-section">
+          <h4>요구 헤딩 (MC/TAS + W/V → MH/GS)</h4>
+          <div class="calc-input-row">
+            <input type="number" id="calcCRS" placeholder="MC" min="0" max="360">
+            <input type="number" id="calcTAS3" placeholder="TAS" min="0" max="500">
+          </div>
+          <div class="calc-input-row">
+            <input type="number" id="calcWDir2" placeholder="W Dir" min="0" max="360">
+            <input type="number" id="calcWSpd2" placeholder="W Spd" min="0" max="200">
+          </div>
+          <div class="calc-button-result">
+            <button id="calcHeadingBtn" class="btn btn-small">계산</button>
+            <div id="calcResult4" class="calc-result-inline">-</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Events Log Panel -->
+      <div id="eventsPanel" class="control-panel">
+        <h3>이벤트 로그</h3>
+        <div id="eventLogContent" class="event-log-content">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="navaid-database.js"></script>
+  <script src="navigation.js"></script>
+  <script src="renderer.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

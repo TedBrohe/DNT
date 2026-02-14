@@ -1,0 +1,649 @@
+/* ========== RESET & GLOBAL ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #000;
+  color: #fff;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* ========== LAYOUT ========== */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+}
+
+.upper-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #000;
+  border-bottom: 2px solid #FFFF00;
+}
+
+.lower-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  overflow: hidden;
+}
+
+/* ========== TAB BAR ========== */
+.tab-bar {
+  display: flex;
+  background-color: #282828;
+  border-bottom: 1px solid #444;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px;
+  background-color: #282828;
+  color: #aaa;
+  border: none;
+  border-right: 1px solid #444;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tab-btn:last-child {
+  border-right: none;
+}
+
+.tab-btn.active {
+  background-color: #003200;
+  color: #00FF00;
+  border-bottom: 3px solid #00FF00;
+}
+
+.tab-btn:active {
+  background-color: #004400;
+}
+
+/* ========== UPPER DISPLAY ========== */
+.upper-display {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background-color: #282828; /* 어두운 배경 */
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* ========== CONTROL PANELS ========== */
+.control-panel {
+  display: none;
+  padding: 15px;
+  overflow-y: auto;
+  height: 100%;
+}
+
+.control-panel.active {
+  display: block;
+}
+
+/* ========== WIND INPUT SECTION ========== */
+.wind-input-section {
+  background-color: #282828;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 2px solid #FFFF00;
+}
+
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.input-group label {
+  color: #00FF00;
+  font-weight: bold;
+  font-size: 12px;
+  min-width: 90px;
+}
+
+.input-group input[type="number"] {
+  flex: 1;
+  padding: 6px;
+  background-color: #141414;
+  color: #fff;
+  border: 2px solid #666;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: monospace;
+  text-align: center;
+}
+
+.input-group input[type="number"]:focus {
+  outline: none;
+  border-color: #00FF00;
+}
+
+.input-group input[type="number"]:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input-group span {
+  color: #fff;
+  font-weight: bold;
+}
+
+/* ========== BUTTONS ========== */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn:active {
+  transform: translateY(2px);
+}
+
+.btn-primary {
+  background-color: #FFFF00;
+  color: #000;
+  border: 2px solid #000;
+}
+
+.btn-primary:active {
+  background-color: #CCCC00;
+}
+
+.btn-secondary {
+  background-color: #505050;
+  color: #fff;
+  border: 2px solid #000;
+}
+
+.btn-secondary:active {
+  background-color: #404040;
+}
+
+.btn-success {
+  background-color: #00FF00;
+  color: #000;
+  border: 2px solid #003200;
+}
+
+.btn-success:active {
+  background-color: #00CC00;
+}
+
+.btn-large {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  margin-top: 8px;
+}
+
+.btn-decide {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.btn-small {
+  padding: 8px 15px;
+  font-size: 12px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.button-group .btn {
+  flex: 1;
+}
+
+/* ========== FLIGHT LOG TABLE ========== */
+.flight-log-table-container {
+  overflow-x: auto;
+  margin-bottom: 15px;
+  background-color: #000;
+  border: 2px solid #00FF00;
+  border-radius: 5px;
+}
+
+/* Route Mode Selector */
+.route-mode-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.route-mode-btn {
+  flex: 1;
+  padding: 12px;
+  background-color: #282828;
+  color: #aaa;
+  border: 2px solid #666;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.route-mode-btn.active {
+  background-color: #003200;
+  color: #00FF00;
+  border-color: #00FF00;
+}
+
+.route-mode-btn:hover:not(.active) {
+  background-color: #383838;
+}
+
+.route-section {
+  animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Custom Route Builder */
+.custom-route-info {
+  background-color: #1a1a1a;
+  border: 2px solid #FFFF00;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.custom-route-info p {
+  color: #FFFF00;
+  margin: 0;
+  font-size: 13px;
+}
+
+.custom-route-builder {
+  background-color: #000;
+  border: 2px solid #00FF00;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+#customRouteTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  font-family: monospace;
+}
+
+#customRouteTable th {
+  background-color: #003200;
+  color: #00FF00;
+  padding: 8px 4px;
+  text-align: center;
+  border: 1px solid #00FF00;
+  font-weight: bold;
+}
+
+#customRouteTable td {
+  background-color: #000;
+  color: #fff;
+  padding: 6px 4px;
+  text-align: center;
+  border: 1px solid #333;
+}
+
+.navaid-input {
+  width: 100%;
+  padding: 4px;
+  background-color: #1a1a1a;
+  color: #fff;
+  border: 2px solid #666;
+  border-radius: 3px;
+  font-size: 14px;
+  font-family: monospace;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.navaid-input:focus {
+  outline: none;
+  border-color: #00FF00;
+}
+
+.navaid-input.error {
+  border-color: #ff0000;
+}
+
+.navaid-input.valid {
+  border-color: #00FF00;
+}
+
+/* NAVAID Suggestions */
+.navaid-suggestions {
+  position: absolute;
+  background-color: #1a1a1a;
+  border: 2px solid #00FF00;
+  border-radius: 3px;
+  max-height: 150px;
+  overflow-y: auto;
+  z-index: 1000;
+  display: none;
+  margin-top: 2px;
+  min-width: 120px;
+}
+
+.navaid-suggestions.show {
+  display: block;
+}
+
+.suggestion-item {
+  padding: 8px;
+  color: #fff;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.suggestion-item:hover {
+  background-color: #003200;
+  color: #00FF00;
+}
+
+.suggestion-item.disabled {
+  color: #666;
+  cursor: not-allowed;
+}
+
+.suggestion-item.disabled:hover {
+  background-color: #1a1a1a;
+  color: #666;
+}
+
+.leg-remove-btn {
+  background-color: #500;
+  color: #fff;
+  border: 1px solid #f00;
+  border-radius: 3px;
+  padding: 4px 8px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.leg-remove-btn:hover {
+  background-color: #700;
+}
+
+.custom-route-actions {
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+}
+
+#flightLogTable,
+#flightLogTableCustom {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  font-family: monospace;
+}
+
+#flightLogTable th,
+#flightLogTableCustom th {
+  background-color: #003200;
+  color: #00FF00;
+  padding: 8px 4px;
+  text-align: center;
+  border: 1px solid #00FF00;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#flightLogTable td,
+#flightLogTableCustom td {
+  background-color: #000;
+  color: #fff;
+  padding: 6px 4px;
+  text-align: center;
+  border: 1px solid #333;
+}
+
+#flightLogTable tbody tr:hover,
+#flightLogTableCustom tbody tr:hover {
+  background-color: #1a1a1a;
+}
+
+/* ========== CONTROL SECTION ========== */
+.control-section {
+  background-color: #282828;
+  padding: 20px;
+  border-radius: 8px;
+  border: 2px solid #FFFF00;
+}
+
+.control-section h3 {
+  color: #FFFF00;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 16px;
+}
+
+/* ========== CALCULATOR PANEL ========== */
+.calc-section {
+  background-color: #282828;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  border: 2px solid #00FF00;
+}
+
+.calc-section h4 {
+  color: #00FF00;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.calc-input-row {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 5px;
+}
+
+.calc-input-row input {
+  flex: 1;
+  padding: 6px;
+  background-color: #141414;
+  color: #fff;
+  border: 2px solid #666;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: monospace;
+  text-align: center;
+}
+
+.calc-input-row input:focus {
+  outline: none;
+  border-color: #00FF00;
+}
+
+.calc-button-result {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.calc-button-result .btn {
+  flex-shrink: 0;
+  min-width: 60px;
+}
+
+.calc-result-inline {
+  flex: 1;
+  background-color: #003200;
+  color: #00FF00;
+  padding: 8px;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 12px;
+  border: 2px solid #00FF00;
+  min-height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calc-result {
+  background-color: #003200;
+  color: #00FF00;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #00FF00;
+  margin-top: 10px;
+}
+
+/* ========== EVENT LOG PANEL ========== */
+#eventsPanel h3 {
+  color: #FFFF00;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.event-log-content {
+  background-color: #000;
+  border: 2px solid #00FF00;
+  border-radius: 5px;
+  padding: 10px;
+  height: calc(100% - 60px);
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.log-entry {
+  color: #00FF00;
+  padding: 5px;
+  border-bottom: 1px solid #003200;
+}
+
+.log-entry.latest {
+  color: #FFFF00;
+  font-weight: bold;
+}
+
+/* ========== SCROLLBAR ========== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #141414;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #505050;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #707070;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+  .tab-btn {
+    font-size: 12px;
+    padding: 10px 5px;
+  }
+  
+  #flightLogTable,
+  #flightLogTableCustom {
+    font-size: 10px;
+  }
+  
+  #flightLogTable th,
+  #flightLogTable td,
+  #flightLogTableCustom th,
+  #flightLogTableCustom td {
+    padding: 4px 2px;
+  }
+  
+  .input-group label {
+    font-size: 12px;
+    min-width: 80px;
+  }
+  
+  .input-group input[type="number"] {
+    font-size: 14px;
+    padding: 6px;
+  }
+}
+
+@media (orientation: landscape) and (max-height: 600px) {
+  .upper-section {
+    flex: 1.5;
+  }
+  
+  .lower-section {
+    flex: 1;
+  }
+}
+
+/* ========== UTILITY ========== */
+.text-center {
+  text-align: center;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+/* Prevent text selection */
+input::selection {
+  background: #00FF00;
+  color: #000;
+}
