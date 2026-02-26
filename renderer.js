@@ -417,10 +417,9 @@ class Renderer {
     ctx.fillStyle = COLORS.background;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Apply transformations
-    ctx.translate(canvas.width / 2 + this.mapOffsetX, canvas.height / 2 + this.mapOffsetY);
+    // Simple transformations: translate then scale
+    ctx.translate(this.mapOffsetX, this.mapOffsetY);
     ctx.scale(this.mapScale, this.mapScale);
-    ctx.translate(-canvas.width / 2, -canvas.height / 2);
     
     // Draw route lines (with selected route highlighted)
     this.drawRouteLines(ctx, selectedRoute);
