@@ -257,20 +257,22 @@ class DeadReckoningApp {
         const dist = Math.sqrt(dx * dx + dy * dy);
         
         if (lastTouchDist > 0) {
-          const oldScale = this.renderer.mapScale;
-          const scale = dist / lastTouchDist;
-          this.renderer.mapScale *= scale;
-          this.renderer.mapScale = Math.max(0.5, Math.min(3.0, this.renderer.mapScale));
-          
-          // Adjust offset to keep pinch center fixed
+          // Calculate pinch center in canvas coordinates
           const rect = canvas.getBoundingClientRect();
-          const pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
-          const pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+          const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+          const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
           
-          // Calculate how much to adjust offset
-          const scaleDelta = this.renderer.mapScale / oldScale;
-          this.renderer.mapOffsetX = pinchCenterX - (pinchCenterX - this.renderer.mapOffsetX) * scaleDelta;
-          this.renderer.mapOffsetY = pinchCenterY - (pinchCenterY - this.renderer.mapOffsetY) * scaleDelta;
+          // Calculate scale change
+          const scaleFactor = dist / lastTouchDist;
+          const oldScale = this.renderer.mapScale;
+          const newScale = oldScale * scaleFactor;
+          this.renderer.mapScale = Math.max(0.5, Math.min(3.0, newScale));
+          
+          // Adjust offset to zoom towards pinch center
+          // Formula: newOffset = center - (center - oldOffset) * (newScale / oldScale)
+          const actualScaleFactor = this.renderer.mapScale / oldScale;
+          this.renderer.mapOffsetX = centerX - (centerX - this.renderer.mapOffsetX) * actualScaleFactor;
+          this.renderer.mapOffsetY = centerY - (centerY - this.renderer.mapOffsetY) * actualScaleFactor;
         }
         
         lastTouchDist = dist;
@@ -805,9 +807,10 @@ class DeadReckoningApp {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
     
-    // Calculate offset needed to center aircraft
-    this.renderer.mapOffsetX = centerX - this.aircraft.x * this.renderer.mapScale;
-    this.renderer.mapOffsetY = centerY - this.aircraft.y * this.renderer.mapScale;
+    // Simple transform: offsetX + scale * x = centerX
+    // Therefore: offsetX = centerX - scale * x
+    this.renderer.mapOffsetX = centerX - this.renderer.mapScale * this.aircraft.x;
+    this.renderer.mapOffsetY = centerY - this.renderer.mapScale * this.aircraft.y;
   }
   
   /**
