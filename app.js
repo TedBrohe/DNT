@@ -563,13 +563,38 @@ class DeadReckoningApp {
         resultId = 'calcResult4';
         const result = document.getElementById(resultId);
         
-        const crs = parseFloat(document.getElementById('calcCRS').value) || 0;
-        const tas = parseFloat(document.getElementById('calcTAS3').value) || 0;
+        const mc = parseFloat(document.getElementById('calcCRS').value) || 0;
+        const gs = parseFloat(document.getElementById('calcGS3').value) || 0;
         const wdir = parseFloat(document.getElementById('calcWDir2').value) || 0;
         const wspd = parseFloat(document.getElementById('calcWSpd2').value) || 0;
         
-        const hdgResult = calculateRequiredHeading(crs, tas, wdir, wspd);
-        result.textContent = `MH ${hdgResult.heading.toString().padStart(3, '0')}° / GS ${hdgResult.groundSpeed} kts`;
+        if (gs === 0) {
+          result.textContent = 'GS 입력 필요';
+          return;
+        }
+        
+        // Vector calculation: TAS = GS - Wind
+        // GS vector (on MC course)
+        const gsVec = getVector(mc);
+        const gs_x = gsVec.dx * gs;
+        const gs_y = gsVec.dy * gs;
+        
+        // Wind vector (wind blows FROM windDir, aircraft drifts TO opposite)
+        const windTo = (wdir + 180) % 360;
+        const windVec = getVector(windTo);
+        const w_x = windVec.dx * wspd;
+        const w_y = windVec.dy * wspd;
+        
+        // TAS vector = GS - Wind
+        const tas_x = gs_x - w_x;
+        const tas_y = gs_y - w_y;
+        
+        // Calculate TAS and MH
+        const tas = Math.sqrt(tas_x * tas_x + tas_y * tas_y);
+        let mh = Math.atan2(tas_x, -tas_y) * 180 / Math.PI;
+        mh = normalizeAngle(mh);
+        
+        result.textContent = `MH ${Math.round(mh).toString().padStart(3, '0')}° / TAS ${Math.round(tas)} kts`;
       }
     } catch (e) {
       if (resultId) {
