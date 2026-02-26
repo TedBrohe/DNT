@@ -476,7 +476,7 @@ class Renderer {
         const isSelected = selectedConnections.has(connectionKey);
         
         ctx.strokeStyle = isSelected ? COLORS.yellow : COLORS.lightGrey;
-        ctx.lineWidth = isSelected ? 3 : 1;
+        ctx.lineWidth = (isSelected ? 3 : 1) / this.mapScale; // Scale-independent
         ctx.globalAlpha = isSelected ? 1.0 : 0.4;
         
         ctx.beginPath();
@@ -495,6 +495,10 @@ class Renderer {
    */
   drawNAVAIDs(ctx, selectedRoute = null) {
     const selectedSet = selectedRoute ? new Set(selectedRoute) : null;
+    const size = 10 / this.mapScale; // Scale-independent size
+    const labelOffset = 15 / this.mapScale;
+    const fontSize = 14 / this.mapScale;
+    const lineWidth = 2 / this.mapScale;
     
     for (let key in this.navaidPositions) {
       const pos = this.navaidPositions[key];
@@ -509,14 +513,14 @@ class Renderer {
         // Draw FIX (triangle)
         ctx.fillStyle = isSelected ? COLORS.white : COLORS.lightGrey;
         ctx.beginPath();
-        ctx.moveTo(pos.x, pos.y - 10);
-        ctx.lineTo(pos.x - 9, pos.y + 7);
-        ctx.lineTo(pos.x + 9, pos.y + 7);
+        ctx.moveTo(pos.x, pos.y - size);
+        ctx.lineTo(pos.x - size * 0.9, pos.y + size * 0.7);
+        ctx.lineTo(pos.x + size * 0.9, pos.y + size * 0.7);
         ctx.closePath();
         ctx.fill();
         
         ctx.strokeStyle = isSelected ? COLORS.yellow : COLORS.lightGrey;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = lineWidth;
         ctx.stroke();
       } else {
         // Draw NAVAID (square with color)
@@ -525,19 +529,19 @@ class Renderer {
         } else {
           ctx.fillStyle = COLORS.lightGrey;
         }
-        ctx.fillRect(pos.x - 10, pos.y - 10, 20, 20);
+        ctx.fillRect(pos.x - size, pos.y - size, size * 2, size * 2);
         
         ctx.strokeStyle = isSelected ? COLORS.yellow : COLORS.lightGrey;
-        ctx.lineWidth = 2;
-        ctx.strokeRect(pos.x - 10, pos.y - 10, 20, 20);
+        ctx.lineWidth = lineWidth;
+        ctx.strokeRect(pos.x - size, pos.y - size, size * 2, size * 2);
       }
       
       // Label
       ctx.fillStyle = isSelected ? COLORS.white : COLORS.lightGrey;
-      ctx.font = 'bold 14px Arial';
+      ctx.font = `bold ${fontSize}px Arial`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      ctx.fillText(key, pos.x, pos.y - 15);
+      ctx.fillText(key, pos.x, pos.y - labelOffset);
     }
     
     ctx.globalAlpha = 1.0;
@@ -548,13 +552,14 @@ class Renderer {
    */
   drawHistory(ctx, aircraft) {
     ctx.fillStyle = COLORS.lightNavy;
+    const dotSize = 3 / this.mapScale; // Scale-independent
     
     // Draw dots every 60 seconds
     for (let i = 0; i < aircraft.positionHistory.length; i++) {
       if (i % 60 === 0) {
         const pos = aircraft.positionHistory[i];
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y, 3, 0, Math.PI * 2);
+        ctx.arc(pos.x, pos.y, dotSize, 0, Math.PI * 2);
         ctx.fill();
       }
     }
@@ -568,19 +573,23 @@ class Renderer {
     ctx.translate(aircraft.x, aircraft.y);
     ctx.rotate((aircraft.track * Math.PI) / 180); // Track 방향
     
+    const size = 8 / this.mapScale; // Scale-independent
+    const lineLength = 25 / this.mapScale;
+    const lineWidth = 2 / this.mapScale;
+    
     // Aircraft circle
     ctx.strokeStyle = COLORS.white;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = lineWidth;
     ctx.beginPath();
-    ctx.arc(0, 0, 8, 0, Math.PI * 2);
+    ctx.arc(0, 0, size, 0, Math.PI * 2);
     ctx.stroke();
     
     // Track line (진행 방향)
     ctx.strokeStyle = COLORS.white;
-    ctx.lineWidth = 2;
+    ctx.lineWidth = lineWidth;
     ctx.beginPath();
     ctx.moveTo(0, 0);
-    ctx.lineTo(0, -25);
+    ctx.lineTo(0, -lineLength);
     ctx.stroke();
     
     ctx.restore();
