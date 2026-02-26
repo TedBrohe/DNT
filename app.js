@@ -145,11 +145,50 @@ class DeadReckoningApp {
     document.getElementById('calculateCustomBtn').addEventListener('click', () => this.calculateCustomRoute());
     document.getElementById('startCustomBtn').addEventListener('click', () => this.startCustomTraining());
     
+    // Mobile keyboard handling - prevent viewport shift
+    this.setupMobileKeyboardFix();
+    
     // Map touch controls
     this.setupMapControls();
     
     // Window resize
     window.addEventListener('resize', () => this.resizeCanvases());
+  }
+  
+  /**
+   * Fix mobile keyboard viewport shift issue
+   */
+  setupMobileKeyboardFix() {
+    // Store original scroll position
+    let originalScrollY = 0;
+    
+    // All input fields
+    const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+    
+    inputs.forEach(input => {
+      // On focus - store scroll position
+      input.addEventListener('focus', () => {
+        originalScrollY = window.scrollY;
+      });
+      
+      // On blur - restore scroll position after small delay
+      input.addEventListener('blur', () => {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          document.body.scrollTop = 0;
+        }, 100);
+      });
+    });
+    
+    // Force scroll to top on any button click
+    document.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          document.body.scrollTop = 0;
+        }, 100);
+      });
+    });
   }
   
   /**
