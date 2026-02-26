@@ -197,6 +197,8 @@ class DeadReckoningApp {
   setupMapControls() {
     const canvas = this.mapCanvas;
     let lastTouchDist = 0;
+    let lastPinchCenterX = 0;
+    let lastPinchCenterY = 0;
     
     // Mouse drag
     canvas.addEventListener('mousedown', (e) => {
@@ -231,6 +233,11 @@ class DeadReckoningApp {
         const dx = e.touches[1].clientX - e.touches[0].clientX;
         const dy = e.touches[1].clientY - e.touches[0].clientY;
         lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+        
+        // Store pinch center
+        const rect = canvas.getBoundingClientRect();
+        lastPinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+        lastPinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
       }
     });
     
@@ -250,9 +257,20 @@ class DeadReckoningApp {
         const dist = Math.sqrt(dx * dx + dy * dy);
         
         if (lastTouchDist > 0) {
+          const oldScale = this.renderer.mapScale;
           const scale = dist / lastTouchDist;
           this.renderer.mapScale *= scale;
           this.renderer.mapScale = Math.max(0.5, Math.min(3.0, this.renderer.mapScale));
+          
+          // Adjust offset to keep pinch center fixed
+          const rect = canvas.getBoundingClientRect();
+          const pinchCenterX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - rect.left;
+          const pinchCenterY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - rect.top;
+          
+          // Calculate how much to adjust offset
+          const scaleDelta = this.renderer.mapScale / oldScale;
+          this.renderer.mapOffsetX = pinchCenterX - (pinchCenterX - this.renderer.mapOffsetX) * scaleDelta;
+          this.renderer.mapOffsetY = pinchCenterY - (pinchCenterY - this.renderer.mapOffsetY) * scaleDelta;
         }
         
         lastTouchDist = dist;
